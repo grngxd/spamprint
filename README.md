@@ -45,11 +45,16 @@ prediction: kushai (confidence: 91.74%)
 - but really, it's a fun experiment in probabilistic modeling and pattern recognition
 - and it shows how even seemingly random behavior can have underlying structure that can be analyzed and predicted
 
+
 ## tldr
 - spamprint is a fun experiment that identifies who produced a keyboard mash based on their unique typing patterns
 - it builds a probabilistic model (i.e fingerprint) of character transitions for each user and compares new input against those
 - and its weirdly good at doing it
 
+# silly use cases
+- 2fa: instead of sending a code, ask the user to mash their keyboard and verify it against their profile
+- online games: identify players based on their typing patterns to prevent smurfing or account sharing
+
 ## how do i run it?
-- you can run it in bun, just `bun index.ts`
+- download [bun](https://bun.sh) and run `bun .` in the project directory
 - it will prompt you to enter training data, but you can just hit enter to use the default training data in `training.json`

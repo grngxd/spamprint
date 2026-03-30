@@ -49,12 +49,16 @@ type Model = {
     scored: TransitionMap;
 }[];
 
+const now = performance.now();
+
 const model: Model = Object.entries(data).map(([name, inputs]) => {
     const input = inputs.map((s) => s.trim()).join("");
     const transitions = buildTransitions(input);
     const scored = scoreTransitions(transitions);
     return { name, scored };
 });
+
+console.log(`model ready in ${(performance.now() - now).toFixed(2)}ms`);
 
 const predictName = (input: string, m: Model) => {
     const scores = m.map(({ name, scored }) => {

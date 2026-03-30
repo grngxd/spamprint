@@ -54,6 +54,7 @@ prediction: kushai (confidence: 91.74%)
 ## silly use cases
 - 2fa: instead of sending a code, ask the user to mash their keyboard and verify it against their profile
 - online games: identify players based on their typing patterns to prevent smurfing or account sharing
+- anti-llm: identify if input is coming from a human or a bot based on typing patterns 😭😭😭
 
 ## how do i run it?
 - download [bun](https://bun.sh) and run `bun .` in the project directory

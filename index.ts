@@ -1,11 +1,19 @@
+let data: Record<string, string[]> = {}
+const train = prompt("enter training data (or leave blank to use default):");
+if (train) {
+    data = JSON.parse(Buffer.from(train, "base64url").toString("utf-8"));
+} else {
+    data = JSON.parse(await Bun.file("training.json").text());
+}
+
 type TransitionMap = Record<string, Record<string, number>>;
 
 const buildTransitions = (input: string) => {
     const map: TransitionMap = {};
 
     for (let i = 0; (i < input.length - 1); i++) {
-        const current = input[i]
-        const next = input[i + 1]
+        const current = input[i]!
+        const next = input[i + 1]!
         
         if (!map[current]) {
             map[current] = {};
@@ -29,48 +37,11 @@ const scoreTransitions = (transitions: TransitionMap) => {
         Object.values(to).forEach((count) => total += count);
 
         for (const [letter, count] of Object.entries(to)) {
-            scored[from][letter] = count / total;
+            scored[from]![letter] = count / total;
         }
     }
 
     return scored;
-}
-
-const inputs: Record<string, string[]> = {
-    "grng": [
-        "asodhsajhdjklashjdaklsascdasdasdqwedasdd",
-        "ashjkdashjkgdjkhsajkdhasjkddasdsqwdsad",
-        "asmndvasnmdvgjashgvdhjkasghdhjkhqsasdsadas",
-        "asghbdgsahjsadhjkhkqwilhdjjksadasddasdasd",
-        "awihsdgbhahksdkhjhqwkjldnjkshbalkdjnasdsad",
-        "asjkdghbjkweahdqweiodhgjksahklcjhasdjkdhedqsl;d",
-        "ashjgdyuqwihewiouiwehreioudfwouiyfoisdjoweuiuisdfjiloasjdolis",
-        "sljkahndijkhdlasjhdioasjdoasjd",
-        "askjdbgqwuihJKHiajkjsdlkjadlsjladja",
-        "klasjfhnsdklrpqwepodjkpskadjokls",
-        "oaskldjhuiqwjodasjkhdiopasjkxjnoapsjdjwhdoiqwjodkasjoadjoslk",
-        "lqwjhbriu3yroqwheuidshbakjdnl",
-        "askdjbahjkebqwjkbdkas",
-        "kjabnskdjhquiowhoiehbndbndbndsaklkas",
-        "a;klsudjpqw[aeldklsaje;'sdkifklsjdfklhsdojioasdufhioas",
-        "lasdlashjdashdkjaslhcoiasjsiojcas",
-        ".ZKmcxhnasiodpweuquioduasiljdlasjkopd;as"
-    ],
-
-    "kushai": [
-        "'PAOwjd]POwJDP[jwDP[jwDP|jWDPOJw{D",
-        "\\APWOD['WDJP['ojwDP['|ojw]PODkWD[#P~w",
-        "lpwosd@OWd[#pWKd[#|WAdpo|KAW}~dpk|}D~",
-        "#{wpkd['OWJdp[Wd[{wpokD}PAKWdp]oKOWAD]",
-        "APOWkjd]pWAKd]AWDpJKA{wdpoJAWd",
-        "pwioj{waodj[AWJdP}AWdp]OJAW}{dpo",
-        "'apwojsd[AOWJd[AJWd][oJAW}{dojwdoj",
-        "}PAOwkd[OAJWDPOJAwdipojWAPODjWA{D",
-        "kjhnishwsnw9uizniwnri0usnwizsuniunsiwnjhiwn9zuijnaw9izuanw9un\\z9qa28un8",
-        "9\\u2n8\\un28\\un28uh\\82uj80u280\\u2j80\\un29\\u8nq2",
-        "09u8\\n2un\\08u2eh0\\*Uq2n0\\iu2hei\\uh3priohp;oijh;i4jf;ali4jf;",
-        "alejic;.elirjc.erhlafkuhealuhuyswbeu9shb"
-    ]
 }
 
 type Model = {
@@ -78,7 +49,7 @@ type Model = {
     scored: TransitionMap;
 }[];
 
-const model: Model = Object.entries(inputs).map(([name, inputs]) => {
+const model: Model = Object.entries(data).map(([name, inputs]) => {
     const input = inputs.map((s) => s.trim()).join("");
     const transitions = buildTransitions(input);
     const scored = scoreTransitions(transitions);
@@ -90,8 +61,8 @@ const predictName = (input: string, m: Model) => {
         let score = 0;
 
         for (let i = 0; i < input.length - 1; i++) {
-            const current = input[i];
-            const next = input[i + 1];
+            const current = input[i]!;
+            const next = input[i + 1]!;
             score += Math.log(scored[current]?.[next] ?? 1e-9);
         }
 
@@ -102,14 +73,13 @@ const predictName = (input: string, m: Model) => {
 
     scores.sort((a, b) => b.score - a.score);
 
-    const best = scores[0];
-    const second = scores[1];
+    const best = scores[0]!;
+    const second = scores[1]!;
 
     const confidence = 1 / (1 + Math.exp(second.score - best.score));
 
     return { name: best.name, confidence };
 }
-
 
 while (true) {
     const input = prompt("enter a string to predict its name (or 'exit' to quit):");

@@ -51,7 +51,7 @@ prediction: kushai (confidence: 91.74%)
 - it builds a probabilistic model (i.e fingerprint) of character transitions for each user and compares new input against those
 - and its weirdly good at doing it
 
-# silly use cases
+## silly use cases
 - 2fa: instead of sending a code, ask the user to mash their keyboard and verify it against their profile
 - online games: identify players based on their typing patterns to prevent smurfing or account sharing
 
